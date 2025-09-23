@@ -1,11 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
-import userRoutes from "./routes/user.route";
-import postRoutes from "./routes/post.route";
-import commentRoutes from "./routes/comment.route";
-import likeRoutes from "./routes/like.route";
-import authRoutes from "./routes/auth.route";
+import userRoutes from "./routes/user.route.js";
+import postRoutes from "./routes/post.route.js";
+import commentRoutes from "./routes/comment.route.js";
+import likeRoutes from "./routes/like.route.js";
+import authRoutes from "./routes/auth.route.js";
 
 dotenv.config();
 connectDB();
