@@ -1,6 +1,6 @@
 // controllers/postController.ts
 import { Request, Response } from "express";
-import * as postService from "../services/postService";
+import * as postService from "../services/postService.js";
 
 export const createPost = async (req: Request, res: Response) => {
   try {

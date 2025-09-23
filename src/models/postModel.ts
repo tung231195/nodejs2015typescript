@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-import { IPost } from '../interfaces/post.interface';
+import { IPost } from '../interfaces/post.interface.js';
 export type IPostDoc = IPost & Document<Types.ObjectId>;
 const PostSchema = new Schema<IPostDoc>({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },

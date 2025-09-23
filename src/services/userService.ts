@@ -1,6 +1,6 @@
 // services/userService.ts
 
-import { UserModel } from "../models/userModel";
+import { UserModel } from "../models/userModel.js";
 import { IUserDoc } from "../types";
 
 

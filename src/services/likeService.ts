@@ -1,6 +1,6 @@
 // services/likeService.ts
 
-import { ILikeDoc, LikeModel } from "../models/likeModel";
+import { ILikeDoc, LikeModel } from "../models/likeModel.js";
 
 export const likePost = async (data: Partial<ILikeDoc>): Promise<ILikeDoc> => {
   try {

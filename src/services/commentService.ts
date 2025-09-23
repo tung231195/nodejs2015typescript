@@ -1,4 +1,4 @@
-import { CommentModel, ICommentDoc } from "../models/commentModel";
+import { CommentModel, ICommentDoc } from "../models/commentModel.js";
 
 // services/commentService.ts
 export const createComment = async (data: Partial<ICommentDoc>): Promise<ICommentDoc> => {

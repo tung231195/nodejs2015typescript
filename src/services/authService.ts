@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { TokenModel } from '../models/tokenModel';
-import { UserModel } from '../models/userModel';
+import { TokenModel } from '../models/tokenModel.js';
+import { UserModel } from '../models/userModel.js';
 
 const ACCESS_EXPIRES = '15m';
 const REFRESH_EXPIRES = '7d';

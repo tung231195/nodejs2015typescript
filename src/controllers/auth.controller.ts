@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { UserModel } from "../models/userModel";
+import { UserModel } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-import { TokenModel } from "../models/tokenModel";
+import { TokenModel } from "../models/tokenModel.js";
 
 const generateAccessToken = (user: any) => {
   return jwt.sign(

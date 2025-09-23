@@ -1,6 +1,6 @@
 // services/postService.ts
 
-import { IPostDoc, PostModel } from "../models/postModel";
+import { IPostDoc, PostModel } from "../models/postModel.js";
 
 
 export const createPost = async (data: Partial<IPostDoc>): Promise<IPostDoc> => {

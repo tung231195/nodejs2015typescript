@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../models/userModel";
+import { UserModel } from "../models/userModel.js";
 
 export const authMiddleware = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1];

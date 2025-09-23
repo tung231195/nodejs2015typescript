@@ -1,7 +1,7 @@
 // controllers/likeController.ts
 import { Request, Response } from "express";
-import * as likeService from "../services/likeService";
-import { LikeModel } from "../models/likeModel";
+import * as likeService from "../services/likeService.js";
+import { LikeModel } from "../models/likeModel.js";
 
 export const likePost = async (req: Request, res: Response) => {
   try {
