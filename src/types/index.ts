@@ -1,12 +1,8 @@
 import mongoose, { Document, Types } from "mongoose";
-export interface authProvider {
-  type: String;
-  enum: ["local", "google", "facebook"];
-  default: "local";
-}
+export type AuthProvider = "local" | "google" | "facebook";
 export interface IUser {
   googleId: string;
-  authProvider: authProvider;
+  authProvider: AuthProvider;
   picture: string;
   name: string;
   email: string;
@@ -17,6 +13,14 @@ export interface IUserDoc extends IUser, Document {
   comparePassword(password: string): Promise<boolean>;
 }
 
+export interface IUserInput {
+  googleId?: string;
+  email: string;
+  name?: string;
+  picture?: string;
+  authProvider?: "local" | "google" | "facebook";
+  password?: string;
+}
 export interface IPost {
   user: string;
   content: string;

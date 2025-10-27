@@ -3,7 +3,7 @@ import { UserModel } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import { TokenModel } from "../models/tokenModel.js";
 import { OAuth2Client } from "google-auth-library";
-import { IUserDoc } from "../types/index.js";
+import { IUserDoc, IUserInput } from "../types/index.js";
 import axios from "axios";
 const generateAccessToken = (user: any) => {
   return jwt.sign(
@@ -90,10 +90,12 @@ export const logout = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error logging out" });
   }
 };
-async function findOrCreateUser({ googleId, email, name, picture }: IUserDoc): Promise<{
+async function findOrCreateUser(input: IUserInput): Promise<{
   user: IUserDoc;
   created: boolean;
 }> {
+  const { googleId, email, name, picture, authProvider = "google", password = "google" } = input;
+
   let user = await UserModel.findOne({ email });
 
   if (!user) {
@@ -102,8 +104,8 @@ async function findOrCreateUser({ googleId, email, name, picture }: IUserDoc): P
       email: email ?? "abc@gmail.com",
       name: name ?? "",
       picture: picture ?? "",
-      authProvider: "google",
-      password: "google",
+      authProvider,
+      password,
     });
     return { user, created: true };
   }
@@ -126,9 +128,17 @@ export const google = async (req: Request, res: Response) => {
     }
 
     const { sub, email, name, picture } = payload;
-
     // TODO: kiểm tra DB, tạo user nếu chưa có
-    const user = await findOrCreateUser({ googleId: sub, email, name, picture });
+    if (!email) {
+      return res.status(400).json({ message: "Google account has no email" });
+    }
+    // TODO: kiểm tra DB, tạo user nếu chưa có
+    const user = await findOrCreateUser({
+      googleId: sub,
+      email,
+      name: name ?? "Unknown User", // ✅ fallback an toàn
+      picture: picture ?? "",
+    });
 
     // Trả JWT app riêng
     return res.json({

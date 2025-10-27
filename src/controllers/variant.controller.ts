@@ -16,6 +16,7 @@ export const VariantController = {
     const { productId, variantId } = req.params;
     const product = await ProductModel.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product.variants) return res.status(404).json({ message: "Variant not found" });
 
     const variant = product.variants.id(variantId);
     if (!variant) return res.status(404).json({ message: "Variant not found" });
@@ -28,6 +29,7 @@ export const VariantController = {
     const { productId } = req.params;
     const product = await ProductModel.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product.variants) return res.status(404).json({ message: "Variant not found" });
 
     product.variants.push(req.body);
     await product.save();
@@ -40,6 +42,7 @@ export const VariantController = {
     const { productId, variantId } = req.params;
     const product = await ProductModel.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product.variants) return res.status(404).json({ message: "Variant not found" });
 
     const variant = product.variants.id(variantId);
     if (!variant) return res.status(404).json({ message: "Variant not found" });
@@ -55,6 +58,7 @@ export const VariantController = {
     const { productId, variantId } = req.params;
     const product = await ProductModel.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product.variants) return res.status(404).json({ message: "Variant not found" });
 
     const variant = product.variants.id(variantId);
     if (!variant) return res.status(404).json({ message: "Variant not found" });

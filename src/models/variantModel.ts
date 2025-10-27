@@ -3,10 +3,10 @@ import { IVariantDoc } from "../types";
 import { ProductAttributeValueDocSchema } from "./productAttributeValueModel";
 
 export const VariantSchema = new Schema<IVariantDoc>({
-  sku: { type: String },
+  sku: { type: String, required: true },
   price: { type: Number, required: true },
   compareAtPrice: { type: Number },
-  stock: { type: Number, default: 0 },
+  stock: { type: Number, required: true, default: 0 },
   attributes: [ProductAttributeValueDocSchema],
   images: [String],
 });
