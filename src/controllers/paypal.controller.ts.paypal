@@ -1,0 +1,55 @@
+import { ApiError, CheckoutPaymentIntent, OrdersController } from "@paypal/paypal-server-sdk";
+import paypalClient from "../config/paypal";
+
+// Tạo instance OrdersController
+const ordersController = new OrdersController(paypalClient);
+
+// ✅ Tạo order
+export const createPaypalOrder = async (req: Request, res: Response) => {
+  const collect = {
+    body: {
+      intent: CheckoutPaymentIntent.Capture,
+      purchaseUnits: [
+        {
+          amount: {
+            currencyCode: req.usd,
+            value: req.totalPrice,
+          },
+        },
+      ],
+    },
+    prefer: "return=minimal",
+  };
+
+  try {
+    const { result, ...httpResponse } = await ordersController.createOrder(collect);
+    res.status(201).json({ success: true, data: order });
+    // Get more response info...
+    // const { statusCode, headers } = httpResponse;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const errors = error.result;
+      // const { statusCode, headers } = error;
+    }
+    res.status(500).json({ success: false });
+  }
+};
+
+// ✅ Capture order
+export const capturePaypalOrder = async (req: Request, res: Response) => {
+  const collect = {
+    id: "id0",
+    prefer: "return=minimal",
+  };
+
+  try {
+    const { result, ...httpResponse } = await ordersController.captureOrder(collect);
+    // Get more response info...
+    // const { statusCode, headers } = httpResponse;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const errors = error.result;
+      // const { statusCode, headers } = error;
+    }
+  }
+};
