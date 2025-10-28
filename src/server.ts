@@ -68,6 +68,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"], // 👈 thêm dòng này
     credentials: true,
   },
+  transports: ["websocket", "polling"], // 👈 thêm dòng này
 });
 // Truyền io + subscriber vào handler
 socketHandler(io, publisher);
