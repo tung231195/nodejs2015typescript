@@ -48,13 +48,13 @@ export const syncItems = async (userId: string, items: IOrderItemDoc[]) => {
 
   const newItems = await Promise.all(
     items.map(async (item: any) => {
-      if (item.image?.startsWith("data:")) {
-        const filename = `${userId}_${Date.now()}`;
-        console.log("Đang lưu ảnh:", filename);
-        const filePath = await saveBase64Image(item.image, filename);
-        console.log("Đã lưu file:", filePath);
-        item.image = filePath;
-      }
+      // if (item.image?.startsWith("data:")) {
+      //   const filename = `${userId}_${Date.now()}`;
+      //   console.log("Đang lưu ảnh:", filename);
+      //   const filePath = await saveBase64Image(item.image, filename);
+      //   console.log("Đã lưu file:", filePath);
+      //   item.image = filePath;
+      // }
 
       return item;
     }),

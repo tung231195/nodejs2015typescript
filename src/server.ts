@@ -37,7 +37,7 @@ app.use(
       "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
     ], // domain frontend của bạn
-    methods: ["GET", "POST"], // 👈 thêm dòng này
+    methods: ["GET", "POST", "PUT"], // 👈 thêm dòng này
     credentials: true,
   }),
 );
@@ -65,7 +65,7 @@ const io = new Server(server, {
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
       "https://nextjs15typescript.vercel.app",
     ],
-    methods: ["GET", "POST"], // 👈 thêm dòng này
+    methods: ["GET", "POST", "PUT"], // 👈 thêm dòng này
     credentials: true,
   },
   transports: ["websocket", "polling"], // 👈 thêm dòng này
