@@ -1,6 +1,6 @@
 // controllers/paymentMethodController.ts
 import { Request, Response } from "express";
-import * as paymentMethodService from "../services/paymentMethod";
+import * as paymentMethodService from "../services/paymentMethod.js";
 
 export const createPaymentMethod = async (req: Request, res: Response) => {
   try {

@@ -1,6 +1,6 @@
 // controllers/deliveryController.ts
 import { Request, Response } from "express";
-import * as deliveryService from "../services/deliveryMethod";
+import * as deliveryService from "../services/deliveryMethod.js";
 
 export const createDelivery = async (req: Request, res: Response) => {
   try {
