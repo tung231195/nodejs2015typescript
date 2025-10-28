@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import { IProductDoc } from "../types";
 import slugify from "slugify";
-import { VariantSchema } from "./variantModel";
-import { ProductAttributeValueDocSchema } from "./productAttributeValueModel";
+import { VariantSchema } from "./variantModel.js";
+import { ProductAttributeValueDocSchema } from "./productAttributeValueModel.js";
 
 const ProductSchema = new Schema<IProductDoc>(
   {

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IVariantDoc } from "../types";
-import { ProductAttributeValueDocSchema } from "./productAttributeValueModel";
+import { ProductAttributeValueDocSchema } from "./productAttributeValueModel.js";
 
 export const VariantSchema = new Schema<IVariantDoc>({
   sku: { type: String, required: true },
