@@ -1,6 +1,6 @@
 // services/postService.ts
 
-import { PaymentMethodModel } from "../models/paymentModel";
+import { PaymentMethodModel } from "../models/paymentModel.js";
 import { IPaymentItemDoc } from "../types";
 
 export const createPaymentMethod = async (

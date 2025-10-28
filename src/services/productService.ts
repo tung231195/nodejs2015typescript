@@ -1,6 +1,6 @@
 // services/productService.ts
 
-import { ProductModel } from "../models/productModel";
+import { ProductModel } from "../models/productModel.js";
 import { IProductDoc } from "../types";
 
 export const createProduct = async (data: Partial<IProductDoc>): Promise<IProductDoc> => {

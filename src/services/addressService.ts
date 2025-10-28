@@ -1,6 +1,6 @@
 // services/addressService.ts
 
-import { AddressModel } from "../models/addressModel";
+import { AddressModel } from "../models/addressModel.js";
 import { IAddressItemDoc } from "../types";
 
 export const createAddress = async (data: Partial<IAddressItemDoc>): Promise<IAddressItemDoc> => {

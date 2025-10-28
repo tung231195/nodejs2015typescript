@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { IOrderItemDoc } from "../types";
-import { OrderModel } from "../models/orderModel";
-import { CartModel } from "../models/cartModel";
+import { OrderModel } from "../models/orderModel.js";
+import { CartModel } from "../models/cartModel.js";
 import { saveBase64Image } from "../upload";
 
 /**

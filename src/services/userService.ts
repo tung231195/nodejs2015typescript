@@ -3,7 +3,6 @@
 import { UserModel } from "../models/userModel.js";
 import { IUserDoc } from "../types";
 
-
 export const createUser = async (data: Partial<IUserDoc>): Promise<IUserDoc> => {
   try {
     const user = new UserModel(data);

@@ -1,5 +1,5 @@
-import { CartModel } from "../models/cartModel";
-import { OrderModel } from "../models/orderModel";
+import { CartModel } from "../models/cartModel.js";
+import { OrderModel } from "../models/orderModel.js";
 import { IOrderDoc } from "../types";
 
 export const createOrder = async (orderData: Partial<IOrderDoc>): Promise<IOrderDoc> => {

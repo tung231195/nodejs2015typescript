@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ProductModel } from "../models/productModel";
+import { ProductModel } from "../models/productModel.js";
 
 export const VariantController = {
   // 🔹 Lấy danh sách variant của 1 product
