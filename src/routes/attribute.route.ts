@@ -5,7 +5,7 @@ import {
   getAttributeById,
   updateAttribute,
   deleteAttribute,
-} from "../controllers/attribute.controller";
+} from "../controllers/attribute.controller.js";
 
 const router = Router();
 router.post("/", createAttribute);

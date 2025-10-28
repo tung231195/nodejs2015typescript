@@ -5,7 +5,7 @@ import {
   getPaymentMethodById,
   updatePaymentMethod,
   deletePaymentMethod,
-} from "../controllers/paymentMethod.controller";
+} from "../controllers/paymentMethod.controller.js";
 
 const router = Router();
 router.post("/", createPaymentMethod);

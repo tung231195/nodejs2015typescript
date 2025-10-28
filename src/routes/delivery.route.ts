@@ -5,7 +5,7 @@ import {
   getDeliveryById,
   updateDelivery,
   deleteDelivery,
-} from "../controllers/delivery.controller";
+} from "../controllers/delivery.controller.js";
 
 const router = Router();
 router.post("/", createDelivery);

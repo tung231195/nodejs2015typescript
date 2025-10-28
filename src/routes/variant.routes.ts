@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { VariantController } from "../controllers/variant.controller";
+import { VariantController } from "../controllers/variant.controller.js";
 
 const router = Router({ mergeParams: true });
 

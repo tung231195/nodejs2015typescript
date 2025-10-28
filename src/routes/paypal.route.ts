@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as paypalController from "../controllers/paypal.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
+import * as paypalController from "../controllers/paypal.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

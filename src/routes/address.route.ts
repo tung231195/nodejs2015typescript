@@ -7,7 +7,7 @@ import {
   deleteAddressById,
   getAddressDefault,
   updateDefaultAllAddress,
-} from "../controllers/address.controller";
+} from "../controllers/address.controller.js";
 
 const router = Router();
 router.post("/", createAddress);
