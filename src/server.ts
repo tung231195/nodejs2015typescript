@@ -33,9 +33,12 @@ app.use(
   cors({
     origin: [
       process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+      "https://nextjs15typescript.vercel.app",
+      "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
     ], // domain frontend của bạn
-    credentials: true, // nếu có dùng cookie / session
+    methods: ["GET", "POST"], // 👈 thêm dòng này
+    credentials: true,
   }),
 );
 app.use("/api/auth", authRoutes);
@@ -58,8 +61,12 @@ const io = new Server(server, {
   cors: {
     origin: [
       process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+      "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
+      "https://nextjs15typescript.vercel.app",
     ],
+    methods: ["GET", "POST"], // 👈 thêm dòng này
+    credentials: true,
   },
 });
 // Truyền io + subscriber vào handler
