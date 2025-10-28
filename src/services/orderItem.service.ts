@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IOrderItemDoc } from "../types";
 import { OrderModel } from "../models/orderModel.js";
 import { CartModel } from "../models/cartModel.js";
-import { saveBase64Image } from "../upload";
+import { saveBase64Image } from "../upload/index.js";
 
 /**
  * Thêm sản phẩm vào order (chưa checkout)
