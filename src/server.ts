@@ -16,6 +16,7 @@ import paymentRoutes from "./routes/paypal.route.js";
 import addresstRoutes from "./routes/address.route.js";
 import paymentMethodRoutes from "./routes/payment.route.js";
 import deliverytRoutes from "./routes/delivery.route.js";
+import slideshowRoutes from "./routes/slideshow.route.js";
 import http from "http";
 import path from "path";
 import socketHandler from "./socket/socketHandler.js";
@@ -56,6 +57,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/address", addresstRoutes);
 app.use("/api/delivery", deliverytRoutes);
 app.use("/api/paymentmethod", paymentMethodRoutes);
+app.use("/api/slideshow", slideshowRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

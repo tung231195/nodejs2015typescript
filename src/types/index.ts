@@ -88,13 +88,22 @@ export interface ICategory {
 
 export interface ICategoryDoc extends ICategory, Document {}
 
+export type DiscountType = {
+  type: "percent" | "amount";
+  value: number;
+};
+
 export interface IProduct {
   name: string;
+  type: "simple" | "variant";
   slug: string;
   variants?: Types.DocumentArray<IVariant>;
   attributes: IProductAttributeValue[];
   description?: string;
   price: number;
+  discount: DiscountType;
+  finalPrice: number;
+  endDate?: Date;
   stock: number;
   category: mongoose.Types.ObjectId;
   images: string[];
@@ -175,3 +184,13 @@ export interface IOrder extends Document {
 }
 
 export interface IOrderDoc extends IOrder, Document {}
+
+export interface ISLideshow {
+  title: string;
+  description?: string;
+  image: string[];
+  link: string;
+  status: "enable" | "disabled";
+}
+
+export interface ISlideshowDoc extends ISLideshow, Document {}

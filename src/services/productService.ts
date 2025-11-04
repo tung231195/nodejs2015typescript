@@ -51,6 +51,24 @@ export const getAllProducts = async (): Promise<IProductDoc[]> => {
     throw new Error("Failed to fetch products");
   }
 };
+
+export const getAllProductsByCategory = async (category_id: string): Promise<IProductDoc[]> => {
+  try {
+    return await ProductModel.find({ category: category_id }).populate("category");
+  } catch (error: any) {
+    console.error("Error in getAllProducts By categoryId:", error.message);
+    throw new Error("Failed to fetch products");
+  }
+};
+
+export const getSaleProducts = async (): Promise<IProductDoc[]> => {
+  try {
+    return await ProductModel.find({ "discount.value": { $gt: 0 } }).populate("category");
+  } catch (error: any) {
+    console.error("Error in getAllProducts:", error.message);
+    throw new Error("Failed to fetch products");
+  }
+};
 export const updateProduct = async (data: Partial<IProductDoc>): Promise<IProductDoc | null> => {
   try {
     if (data.images && data.images.length > 0) {
@@ -75,7 +93,7 @@ export const updateProduct = async (data: Partial<IProductDoc>): Promise<IProduc
       data._id,
       { $set: data },
       { new: true, runValidators: true },
-    );
+    ).populate("category");
   } catch (error: any) {
     console.error("Error in Products:", error.message);
     throw new Error("Failed to create post");

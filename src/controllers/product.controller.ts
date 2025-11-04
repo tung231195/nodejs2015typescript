@@ -29,6 +29,24 @@ export const getAllProducts = async (_req: Request, res: Response) => {
   }
 };
 
+export const getAllProductsByCategory = async (_req: Request, res: Response) => {
+  try {
+    const products = await productService.getAllProductsByCategory(_req.params.category_id);
+    res.json(products);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSaleProducts = async (_req: Request, res: Response) => {
+  try {
+    const products = await productService.getSaleProducts();
+    res.json(products);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const product = await productService.deleteProductById(req.params.id);
