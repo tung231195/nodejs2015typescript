@@ -5,7 +5,7 @@ export const PaymentSchema = new Schema<IPaymentItemDoc>(
   {
     method: {
       type: String,
-      enum: ["paypal", "stripe", "momo", "cod"],
+      enum: ["paypal", "stripe", "momo", "cod", "qrcode"],
       required: true,
       trim: true,
       lowercase: true,

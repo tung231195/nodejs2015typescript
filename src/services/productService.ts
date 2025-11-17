@@ -69,6 +69,16 @@ export const getSaleProducts = async (): Promise<IProductDoc[]> => {
     throw new Error("Failed to fetch products");
   }
 };
+
+export const getRelateProducts = async (category: string): Promise<IProductDoc[] | null> => {
+  try {
+    if (!category) throw new Error("The product not exist");
+    return await ProductModel.find({ category: category }).populate("category");
+  } catch (error: any) {
+    console.error("Error in getAllProducts:", error.message);
+    throw new Error("Failed to fetch products");
+  }
+};
 export const updateProduct = async (data: Partial<IProductDoc>): Promise<IProductDoc | null> => {
   try {
     if (data.images && data.images.length > 0) {

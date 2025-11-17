@@ -5,8 +5,13 @@ import { TokenModel } from "../models/tokenModel.js";
 import { OAuth2Client } from "google-auth-library";
 import { IUserDoc, IUserInput } from "../types/index.js";
 import axios from "axios";
-const generateAccessToken = (user: any) => {
-  return jwt.sign(
+import sendEmail from "../util/email/index.js";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
+
+const generateAccessToken = async (user: any) => {
+  console.log("user token", user);
+  return await jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET as string,
     { expiresIn: "115m" }, // access token ngắn hạn
@@ -28,12 +33,12 @@ const generateRefreshToken = async (user: any) => {
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, email, password } = req.body;
-
+    const { name, email, password } = req.body;
+    console.log("user data", req.body);
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "Email already exists" });
 
-    const user = await UserModel.create({ username, email, password });
+    const user = await UserModel.create({ name, email, password });
     res.status(201).json({ message: "User registered", user });
   } catch (err) {
     res.status(500).json({ error: "Error registering user" });
@@ -41,41 +46,57 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  console.log("aaaaaaaaaaaa");
   try {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
-
+    if (!user) return res.status(200).json({ status: "error", message: "The user not exist" });
+    console.log("check password", password, email);
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch)
+      return res.status(200).json({
+        status: "error",
+        message: "Invalid email or password",
+      });
 
-    const accessToken = generateAccessToken(user);
+    const accessToken = await generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
 
-    res.json({ accessToken, refreshToken, user });
+    // hide password
+    const userData = user.toObject();
+    delete userData.password;
+    res.json({
+      status: "success",
+      message: "Login successfully",
+      accessToken,
+      refreshToken,
+      user: userData,
+    });
   } catch (err) {
-    res.status(500).json({ error: "Error logging in" });
+    res.status(500).json({ status: "error", error: "Error logging in" });
   }
 };
 
 export const refresh = async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
+  console.log("refreshToken aaaaaaa", refreshToken);
   if (!refreshToken) return res.status(401).json({ message: "No refresh token" });
 
   try {
     const stored = await TokenModel.findOne({ token: refreshToken });
-    if (!stored) return res.status(403).json({ message: "Invalid refresh token" });
-
+    if (!stored) return res.status(403).json({ message: "Invalid refresh token 1" });
+    console.log("kkkkkkkkk1111", refreshToken, process.env.JWT_REFRESH_SECRET);
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as any;
-
+    console.log("decodeaaaaaaaa", decoded);
     const user = await UserModel.findById(decoded.id);
     if (!user) return res.status(404).json({ message: "User not found" });
-
-    const newAccessToken = generateAccessToken(user);
-    res.json({ accessToken: newAccessToken });
-  } catch (err) {
-    res.status(403).json({ message: "Invalid refresh token" });
+    console.log("user aaaaaaaaa", user);
+    const newAccessToken = await generateAccessToken(user);
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return res.status(403).json({ message: "Invalid refresh token 2", error: err.message });
+    }
+    return res.status(403).json({ message: "Invalid refresh token 2", error: String(err) });
   }
 };
 
@@ -139,10 +160,10 @@ export const google = async (req: Request, res: Response) => {
       name: name ?? "Unknown User", // ✅ fallback an toàn
       picture: picture ?? "",
     });
-
+    console.log("token user google", user);
     // Trả JWT app riêng
     return res.json({
-      accessToken: generateAccessToken(user),
+      accessToken: await generateAccessToken(user.user),
       user: { email, name, picture },
     });
   } catch (err) {
@@ -176,13 +197,73 @@ export const facebookCallback = async (req: Request, res: Response) => {
     // 3. Tạo user trong DB nếu chưa có
     const user = await findOrCreateUser({ googleId: id, email, name, picture: picture.data.url });
     // 4. Tạo JWT cho app
-    const appToken = generateAccessToken(user);
+    const appToken = await generateAccessToken(user.user);
 
     res.redirect(
-      `http://localhost:3000/callback?token=${appToken}&name=${encodeURIComponent(fbUser.name)}`,
+      `http://localhost:3000/callback?token=${appToken}&email=${encodeURIComponent(fbUser.email)}&_id=${id}&&name=${encodeURIComponent(fbUser.name)}&picture=${encodeURIComponent(fbUser.picture.data.url)}`,
     );
   } catch (err) {
     console.error("Facebook login error:", err);
     res.status(500).json({ error: "Login failed" });
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const user = await UserModel.findOne({ email });
+    if (!user) return res.status(400).json({ message: "The Email not already " });
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashed = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.resetPasswordToken = hashed;
+    user.resetPasswordExpire = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+    // sent mail to reset password
+    sendEmail({
+      to: email,
+      subject: "Reset your password",
+      htmlTemplate: "reset-password.html",
+      variables: {
+        name: "Hoang",
+        resetLink: `${process.env.FRONTEND_ORIGIN}/reset/${resetToken}`,
+      },
+    });
+    res.status(201).json({ message: "The Email sent successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Error in Forgot password user" });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) return res.status(400).json({ message: "Missing token or password" });
+
+    // ✅ Hash lại token để khớp DB
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    console.log("ddddddddddddd", hashedToken, password, new Date());
+    // ✅ Tìm user có token và còn hạn
+    const user = await UserModel.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: new Date() }, // còn hạn
+    });
+
+    if (!user) return res.status(400).json({ message: "Token invalid or expired" });
+
+    // ✅ Hash password mới
+    user.password = password;
+
+    // ✅ Xóa token reset
+    user.resetPasswordToken = "";
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return res.json({ message: "Password reset successfully" });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

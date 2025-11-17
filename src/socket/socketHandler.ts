@@ -33,8 +33,17 @@ export default function socketHandler(io: Server, publisher: RedisClientType) {
         case "comment.notify":
           console.log("emit comment.notify", event);
           if (event.data.post) {
-            console.log("emit comment.notify 22222", event.data.post.user);
+            console.log("emit comment.notify 333333", event.data.post.user);
             io.to(event.data.post.user).emit("comment.notify", event);
+          }
+          break;
+
+        case "order.create.notify":
+          console.log("emit order.create.notify", event);
+          if (event.data) {
+            console.log("order notifi", event.data);
+            io.to(event.data.user).emit("order.create.notify", event);
+            io.to("superadmin").emit("order.create.notify", event);
           }
           break;
 
@@ -56,9 +65,9 @@ export default function socketHandler(io: Server, publisher: RedisClientType) {
   io.on("connection", (socket: Socket) => {
     console.log("✅ Client connected:", socket.id);
 
-    socket.on("join", (userId: string) => {
-      socket.join(userId);
-      console.log(`👤 User ${userId} joined room ${userId}`);
+    socket.on("join", (roomId: string) => {
+      socket.join(roomId);
+      console.log(`👤 User ${roomId} joined room`);
     });
 
     socket.on("disconnect", () => {

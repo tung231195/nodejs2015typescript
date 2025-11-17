@@ -4,8 +4,9 @@ import paypalCheckout from "@paypal/checkout-server-sdk";
 import crypto, { sign } from "crypto";
 import axios from "axios";
 import qs from "qs";
+import QRCode from "qrcode";
 
-export const paypal = async (req: Request, res: Response) => {
+export const paypalStripe = async (req: Request, res: Response) => {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     console.log(
@@ -13,11 +14,11 @@ export const paypal = async (req: Request, res: Response) => {
       process.env.STRIPE_SECRET_KEY,
       `${process.env.FRONTEND_ORIGIN}/checkout/success`,
     );
-    const items = req.body || [];
-    console.log("items", items);
+    const { items, shippingAddress, userId } = req.body || [];
+    console.log("items checkout", req.body, items, shippingAddress, userId);
     // map giỏ hàng thành line_items
 
-    const line_items = items.items.map((item: any) => {
+    const line_items = items.map((item: any) => {
       item.image = item.image ? `${process.env.BACKEND_ORIGIN}/${item.image}` : "";
       return {
         price_data: {
@@ -37,6 +38,11 @@ export const paypal = async (req: Request, res: Response) => {
       mode: "payment",
       success_url: `${frontend}/checkout/success`,
       cancel_url: `${frontend}/cart`,
+      metadata: {
+        userId,
+        cartItems: JSON.stringify(items),
+        shippingAddress: JSON.stringify(shippingAddress),
+      },
     });
     console.log("session", session);
     return res.status(200).json({ id: session.id, url: session.url });
@@ -173,3 +179,80 @@ export async function vnPay(req: Request, res: Response) {
 
   return res.status(200).json({ paymentUrl });
 }
+
+export async function processStripeWebhook(req: Request, res: Response) {
+  console.log("run to processing webhook");
+  if (!process.env.STRIPE_SECRET_KEY) return;
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+  const sig = req.headers["stripe-signature"];
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig as string,
+      process.env.STRIPE_WEBHOOK_SECRET!,
+    );
+  } catch (err: any) {
+    console.error("❌ Webhook error:", err.message);
+    res.status(400).json({ error: err.message });
+  }
+  console.log("run to webhook");
+  if (event && event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    console.log("✅ Payment success 123:", session.metadata);
+    try {
+      const userId = session.metadata?.userId;
+      const items = JSON.parse(session.metadata?.cartItems || "[]");
+      const shippingAddress = JSON.parse(session.metadata?.shippingAddress || "{}");
+
+      const newOrder = {
+        user: userId,
+        reference: session.id,
+        items,
+        shippingAddress,
+        paymentMethod: "stripe",
+        paymentResult: {
+          id: session.payment_intent,
+          status: session.payment_status,
+          update_time: new Date().toISOString(),
+          email_address: session.customer_email ?? "",
+        },
+        itemsPrice: Number(session.amount_subtotal) / 100,
+        shippingPrice: 0,
+        taxPrice: 0,
+        totalPrice: Number(session.amount_total) / 100,
+        isPaid: true,
+        paidAt: new Date(),
+        isDelivered: false,
+        status: "processing",
+      };
+    } catch (error) {
+      console.error("❌ Failed to save order:", error);
+    }
+  }
+}
+
+// src/controllers/payment.controller.ts
+
+export const createQrPayment = async (req: Request, res: Response) => {
+  try {
+    const { amount, orderId, bankAccount, bankName, content } = req.body;
+
+    // Nội dung QR (giả lập VNPay hoặc ngân hàng)
+    const qrData = `PAYMENT|BANK:${bankName}|ACCOUNT:${bankAccount}|AMOUNT:${amount}|CONTENT:${content || `ORDER_${orderId}`}`;
+
+    // Tạo ảnh QR base64
+    const qrImage = await QRCode.toDataURL(qrData);
+
+    res.status(200).json({
+      success: true,
+      qrImage,
+      message: "QR code created successfully",
+    });
+  } catch (error) {
+    console.error("QR error:", error);
+    res.status(500).json({ success: false, message: "Failed to create QR" });
+  }
+};

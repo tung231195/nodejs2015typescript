@@ -5,6 +5,7 @@ import {
   getCategoryById,
   updateCategoryById,
   deleteCategoryById,
+  getCategoryProducts,
 } from "../controllers/category.controller.js";
 
 const router = Router();

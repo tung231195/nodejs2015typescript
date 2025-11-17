@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authMiddleware); // yêu cầu đăng nhập
 
-router.post("/", paypalController.vnPay);
-
+router.post("/vnpay", paypalController.vnPay);
+router.post("/stripe", paypalController.paypalStripe);
+router.post("/qrcode", paypalController.createQrPayment);
 export default router;

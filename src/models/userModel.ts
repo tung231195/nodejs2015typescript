@@ -14,6 +14,18 @@ const userSchema = new Schema<IUserDoc>(
       enum: ["local", "google"],
       default: "local",
     },
+    role: {
+      type: String,
+      enum: ["user", "admin", "superadmin"],
+      default: "user",
+    },
+    status: {
+      type: String,
+      enum: ["enable", "disabled"],
+      default: "enable",
+    },
+    resetPasswordToken: { type: String },
+    resetPasswordExpire: { type: Date },
   },
   { timestamps: true },
 );
@@ -28,7 +40,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (password: string) {
-  if (this.password) return bcrypt.compare(password, this.password);
+  if (this.password) return await bcrypt.compare(password, this.password);
 };
 
 export const UserModel = mongoose.model<IUserDoc>("User", userSchema);

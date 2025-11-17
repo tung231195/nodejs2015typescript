@@ -2,9 +2,29 @@
 
 import { LikeModel } from "../models/likeModel.js";
 import { IPostDoc, PostModel } from "../models/postModel.js";
+import { saveBase64Image } from "../upload/index.js";
 
 export const createPost = async (data: Partial<IPostDoc>): Promise<IPostDoc> => {
   try {
+    // 🔹 Nếu có ảnh base64 thì xử lý
+    if (data.images && data.images.length > 0) {
+      const newImages = (
+        await Promise.all(
+          data.images.map(async (image) => {
+            if (image?.startsWith("data:")) {
+              const filename = `product_${Date.now()}`;
+              const filePath = await saveBase64Image(image, filename);
+              return filePath;
+            }
+            return image;
+          }),
+        )
+      ).filter((img): img is string => Boolean(img)); // ✅ lọc bỏ null hoặc undefined
+      // 🔹 Gán lại mảng ảnh đã xử lý
+      data.images = newImages;
+    } else {
+      data.images = [];
+    }
     const post = new PostModel(data);
     return await post.save();
   } catch (error: any) {
@@ -17,6 +37,25 @@ export const updatePost = async (
   data: { _id: string } & Partial<Omit<IPostDoc, "_id" | "user">>,
 ): Promise<IPostDoc> => {
   try {
+    // 🔹 Nếu có ảnh base64 thì xử lý
+    if (data.images && data.images.length > 0) {
+      const newImages = (
+        await Promise.all(
+          data.images.map(async (image) => {
+            if (image?.startsWith("data:")) {
+              const filename = `product_${Date.now()}`;
+              const filePath = await saveBase64Image(image, filename);
+              return filePath;
+            }
+            return image;
+          }),
+        )
+      ).filter((img): img is string => Boolean(img)); // ✅ lọc bỏ null hoặc undefined
+      // 🔹 Gán lại mảng ảnh đã xử lý
+      data.images = newImages;
+    } else {
+      data.images = [];
+    }
     // const { id, title, content } = data;
     const updatedPost = await PostModel.findByIdAndUpdate(
       data._id,

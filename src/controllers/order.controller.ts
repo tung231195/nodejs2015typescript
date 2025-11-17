@@ -22,6 +22,28 @@ export const getUserOrders = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+// GET /api/orders/:id
+export const getAllOrders = async (req: Request, res: Response) => {
+  console.log("run to get orders");
+  try {
+    const order = await orderService.getAllOrders();
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.status(200).json({ success: true, data: order });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const getOrderviews = async (req: Request, res: Response) => {
+  console.log("run to get orders viwe");
+  try {
+    const order = await orderService.getOrderviews();
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.status(200).json({ success: true, data: order });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 
 // GET /api/orders/:id
 export const getOrderById = async (req: Request, res: Response) => {

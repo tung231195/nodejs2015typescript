@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IOrderDoc, IOrderItemDoc } from "../types";
+import { generateOrderReference } from "../util";
 
 const orderItemSchema = new Schema<IOrderItemDoc>(
   {
@@ -7,28 +8,29 @@ const orderItemSchema = new Schema<IOrderItemDoc>(
     name: { type: String, required: true },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
-    image:String
+    image: String,
   },
-  { _id: false }
+  { _id: false },
 );
 
 const orderSchema = new Schema<IOrderDoc>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    reference: { type: String },
     items: [orderItemSchema],
     shippingAddress: {
       fullName: { type: String, required: true },
       address: { type: String, required: true },
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
-      country: { type: String, required: true }
+      country: { type: String, required: true },
     },
     paymentMethod: { type: String, required: true },
     paymentResult: {
       id: String,
       status: String,
       update_time: String,
-      email_address: String
+      email_address: String,
     },
     itemsPrice: { type: Number, required: true, default: 0 },
     shippingPrice: { type: Number, required: true, default: 0 },
@@ -37,9 +39,21 @@ const orderSchema = new Schema<IOrderDoc>(
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: Date,
     isDelivered: { type: Boolean, required: true, default: false },
-    deliveredAt: Date
+    deliveredAt: Date,
+    status: {
+      type: String,
+      enum: ["pending", "processing", "delivered", "cancel"],
+      default: "pending",
+      lowercase: true,
+      trim: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
+orderSchema.pre("save", function (next) {
+  console.log("run to here");
+  this.reference = generateOrderReference();
+  console.log("this.reference ", this.reference);
+  next();
+});
 export const OrderModel = mongoose.model<IOrderDoc>("Order", orderSchema);

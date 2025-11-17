@@ -3,10 +3,14 @@ export type AuthProvider = "local" | "google" | "facebook";
 export interface IUser {
   googleId: string;
   authProvider: AuthProvider;
+  role: "user" | "admin" | "superadmin";
   picture: string;
   name: string;
   email: string;
   password?: string;
+  status?: "enable" | "disabled";
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
 }
 
 export interface IUserDoc extends IUser, Document {
@@ -25,6 +29,7 @@ export interface IPost {
   user: string;
   content: string;
   likes: string[];
+  images?: string[];
 }
 
 export interface IPostDoc extends IPost, Document {}
@@ -142,7 +147,7 @@ export interface IAddress {
 export interface IAddressItemDoc extends IAddress, Document {}
 
 export interface IPayment {
-  method: "paypal" | "stripe" | "momo" | "cod";
+  method: "paypal" | "stripe" | "momo" | "cod" | "qrcode";
   status: "pending" | "paid" | "failed" | "refunded";
   transactionId?: string;
   paidAt?: Date;
@@ -164,6 +169,7 @@ export interface IDeliveryItemDoc extends IDelivery, Document {}
 
 export interface IOrder extends Document {
   user: mongoose.Types.ObjectId; // tham chiếu tới User
+  reference: string;
   items: IOrderItem[];
   shippingAddress: IAddress;
   paymentMethod: string; // COD, PayPal, Stripe...
@@ -181,6 +187,7 @@ export interface IOrder extends Document {
   paidAt?: Date;
   isDelivered: boolean;
   deliveredAt?: Date;
+  status: "pending" | "processing" | "delivered" | "cancel";
 }
 
 export interface IOrderDoc extends IOrder, Document {}
