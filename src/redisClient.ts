@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+//const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+const REDIS_URL = "redis://red-d4debnali9vc73cg1m80:6379";
 
 // 🟢 Publisher (dùng để gửi sự kiện)
 export const publisher: RedisClientType = createClient({ url: REDIS_URL });
