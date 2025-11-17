@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IOrderDoc, IOrderItemDoc } from "../types";
-import { generateOrderReference } from "../util";
+import { generateOrderReference } from "../util/index.js";
 
 const orderItemSchema = new Schema<IOrderItemDoc>(
   {
