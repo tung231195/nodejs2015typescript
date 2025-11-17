@@ -1,7 +1,7 @@
 import express from "express";
 import Stripe from "stripe";
 import dotenv from "dotenv";
-import { createOrder } from "../services/order.service";
+import { createOrder } from "../services/order.service.js";
 import mongoose from "mongoose";
 import { IOrderDoc } from "../types";
 dotenv.config();
