@@ -1,7 +1,7 @@
 // services/postService.ts
 import mongoose from "mongoose";
 import { IProductDoc } from "../types";
-import { ProductModel } from "../models/productModel";
+import { ProductModel } from "../models/productModel.js";
 import { faker } from "@faker-js/faker";
 import slugify from "slugify";
 
