@@ -29,9 +29,24 @@ export const getCategoryProducts = async (params: {
   minPrice?: number;
   maxPrice?: number;
   variantFilters?: { attributeId?: string; valueString?: string }[];
+  page: number;
+  limit: number;
 }) => {
   console.log("get params", params);
-  const { slug, minPrice = 0, maxPrice = Number.MAX_SAFE_INTEGER, variantFilters = [] } = params;
+  let {
+    slug,
+    minPrice = 0,
+    maxPrice = Number.MAX_SAFE_INTEGER,
+    variantFilters = [],
+    page,
+    limit,
+  } = params;
+
+  page = typeof page === "string" ? parseInt(page) : page;
+  limit = typeof limit === "string" ? parseInt(limit) : limit;
+
+  const skip = (page - 1) * limit;
+
   // NOTE: Thay bằng ObjectId thực sự của color/size attribute trong DB
   const ATTRIBUTE_COLOR_ID = "68e63089de8746d605fde99d"; // example
   const ATTRIBUTE_SIZE_ID = "68e7c88af04ba84b032132e7"; // example
@@ -49,6 +64,14 @@ export const getCategoryProducts = async (params: {
     const pipeline: any[] = [
       { $match: matchProductStage },
       { $unwind: "$variants" }, // mỗi variant thành 1 document
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
       // { $match: { "variants.stock": { $gt: 0 } } }, // chỉ lấy variants còn hàng
     ];
 
@@ -87,7 +110,13 @@ export const getCategoryProducts = async (params: {
       $group: {
         _id: "$_id",
         name: { $first: "$name" },
-        category: { $first: "$category" },
+        slug: { $first: "$slug" },
+        category: {
+          $first: {
+            slug: { $arrayElemAt: ["$categoryInfo.slug", 0] },
+            _id: { $arrayElemAt: ["$categoryInfo._id", 0] },
+          },
+        },
         variants: { $push: "$variants" },
         price: { $first: "$price" },
         finalPrice: { $first: "$finalPrice" },
@@ -95,6 +124,8 @@ export const getCategoryProducts = async (params: {
       },
     });
 
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
     // 5️⃣ Facets cho sidebar filter từ variants
 
     const facetsPipeline = [
@@ -114,6 +145,11 @@ export const getCategoryProducts = async (params: {
 
       {
         $facet: {
+          totalItems: [
+            { $match: matchProductStage },
+            { $group: { _id: "$_id" } }, // loại duplicate
+            { $count: "count" },
+          ],
           attributes: [
             // Bước 1: chỉ lấy mảng attributes
             { $unwind: "$attributes" },

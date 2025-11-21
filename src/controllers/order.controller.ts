@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
 import * as orderService from "../services/order.service.js";
-
+import orderQueue from "../queues/orderQueue.js";
 // POST /api/orders
 export const createOrder = async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(500).json({ message: "the user not exit " });
     const order = await orderService.createOrder({ ...req.body, user: req.user._id });
+    // Thêm order vào queue
+    orderQueue.add(order, {
+      attempts: 3,
+      backoff: 5000,
+      removeOnComplete: true,
+    });
     res.status(201).json({ success: true, data: order });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });

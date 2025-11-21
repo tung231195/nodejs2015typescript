@@ -29,8 +29,9 @@ export const getCategoryProducts = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Slug is required" });
     }
     console.log("get params controller", req.params);
+
     const { slug } = req.params;
-    const { minPrice, maxPrice, variants } = req.query;
+    const { minPrice, maxPrice, variants, page = 1, limit = 2 } = req.query;
     const min = minPrice ? Number(minPrice) : 0;
     const max = maxPrice ? Number(maxPrice) : Infinity;
 
@@ -39,6 +40,8 @@ export const getCategoryProducts = async (req: Request, res: Response) => {
       minPrice: min,
       maxPrice: max,
       variantFilters: variants as { attributeId?: string; valueString?: string }[],
+      page: page as number,
+      limit: limit as number,
     });
     if (!category) return res.status(404).json({ message: "category not found" });
     res.json(category);

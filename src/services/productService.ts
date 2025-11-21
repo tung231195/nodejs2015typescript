@@ -43,6 +43,15 @@ export const getProductById = async (id: string): Promise<IProductDoc | null> =>
   }
 };
 
+export const getProductBySlug = async (slug: string): Promise<IProductDoc | null> => {
+  try {
+    return await ProductModel.findOne({ slug: slug }).populate("category");
+  } catch (error: any) {
+    console.error("Error in getproductBySlug:", error.message);
+    throw new Error("Failed to fetch product");
+  }
+};
+
 export const getAllProducts = async (): Promise<IProductDoc[]> => {
   try {
     return await ProductModel.find().populate("category");

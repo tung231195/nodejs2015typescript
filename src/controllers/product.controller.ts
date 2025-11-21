@@ -20,6 +20,16 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 };
 
+export const getProductBySlug = async (req: Request, res: Response) => {
+  try {
+    const product = await productService.getProductBySlug(req.params.slug);
+    if (!product) return res.status(404).json({ message: "product not found" });
+    res.json(product);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getRelateProducts = async (req: Request, res: Response) => {
   try {
     console.log("get reltae", req.body, req.query);

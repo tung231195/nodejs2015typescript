@@ -18,6 +18,7 @@ import addresstRoutes from "./routes/address.route.js";
 import paymentMethodRoutes from "./routes/payment.route.js";
 import deliverytRoutes from "./routes/delivery.route.js";
 import slideshowRoutes from "./routes/slideshow.route.js";
+import fakeRoutes from "./routes/fakeRoutes.js";
 import stripeWebhook from "./routes/stripeWebhook.js";
 import http from "http";
 import path from "path";
@@ -43,7 +44,7 @@ app.use(
       "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
     ], // domain frontend của bạn
-    methods: ["GET", "POST", "PUT"], // 👈 thêm dòng này
+    methods: ["GET", "POST", "PUT", "DELETE"], // 👈 thêm dòng này
     credentials: true,
   }),
 );
@@ -64,6 +65,7 @@ app.use("/api/address", addresstRoutes);
 app.use("/api/delivery", deliverytRoutes);
 app.use("/api/paymentmethod", paymentMethodRoutes);
 app.use("/api/slideshow", slideshowRoutes);
+app.use("/api/fake", fakeRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {
