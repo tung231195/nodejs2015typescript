@@ -40,6 +40,8 @@ app.use(
   cors({
     origin: [
       process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+      "http://frontend:3000",
+      "http://backend:5000",
       "https://nextjs15typescript.vercel.app",
       "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
@@ -72,6 +74,8 @@ const io = new Server(server, {
   cors: {
     origin: [
       process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+      "http://frontend:3000",
+      "http://backend:5000",
       "https://nodejs2015typescript.onrender.com",
       "https://ideographic-nonmodificative-alfonso.ngrok-free.dev",
       "https://nextjs15typescript.vercel.app",
@@ -82,6 +86,6 @@ const io = new Server(server, {
   transports: ["websocket", "polling"], // 👈 thêm dòng này
 });
 // Truyền io + subscriber vào handler
-socketHandler(io, publisher);
+socketHandler(io);
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

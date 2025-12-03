@@ -1,7 +1,8 @@
 import { CartModel } from "../models/cartModel.js";
 import { OrderModel } from "../models/orderModel.js";
 import { IOrderDoc } from "../types";
-import { createClient } from "redis";
+//import { createClient } from "redis";
+import { publisher } from "../redisClient.js";
 export const createOrder = async (orderData: Partial<IOrderDoc>): Promise<IOrderDoc> => {
   const cart = await CartModel.findOne({ user: orderData.user });
   if (!cart || cart.items.length === 0) throw new Error("Cart is empty");
@@ -24,8 +25,8 @@ export const createOrder = async (orderData: Partial<IOrderDoc>): Promise<IOrder
 
   await order.save();
   await CartModel.deleteOne({ user: orderData.user }); // clear cart sau khi checkout
-  const publisher = createClient();
-  await publisher.connect();
+  // const publisher = createClient();
+  // await publisher.connect();
   await publisher.publish(
     "events",
     JSON.stringify({

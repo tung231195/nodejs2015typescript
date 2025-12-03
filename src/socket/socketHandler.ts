@@ -1,6 +1,7 @@
 // socket/socketHandler.ts
 import { Server, Socket } from "socket.io";
-import { RedisClientType } from "redis";
+// import { RedisClientType } from "redis";
+import { subscriber } from "../redisClient.js";
 
 interface EventData {
   type: string;
@@ -8,8 +9,8 @@ interface EventData {
   targetUserId?: string;
 }
 
-export default function socketHandler(io: Server, publisher: RedisClientType) {
-  publisher.subscribe("events", (message) => {
+export default function socketHandler(io: Server) {
+  subscriber.subscribe("events", (message) => {
     try {
       const event: EventData = JSON.parse(message);
       console.log("📢 Event received:", event);

@@ -1,13 +1,13 @@
 import { CommentModel, ICommentDoc } from "../models/commentModel.js";
-import { createClient } from "redis";
+import { publisher } from "../redisClient.js";
 // services/commentService.ts
 export const createComment = async (data: Partial<ICommentDoc>): Promise<ICommentDoc> => {
   try {
     const comment = new CommentModel(data);
     await comment.save();
     const result = await comment.populate("user", "_id name email");
-    const publisher = createClient();
-    await publisher.connect();
+    // const publisher = createClient();
+    // await publisher.connect();
     await publisher.publish(
       "events",
       JSON.stringify({
