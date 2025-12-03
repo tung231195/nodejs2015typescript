@@ -1,7 +1,7 @@
 // src/redis/redisClient.ts
 import { createClient, RedisClientType } from "redis";
 import dotenv from "dotenv";
-import { isDocker } from "./util";
+import { isDocker } from "./util/index.js";
 
 dotenv.config();
 
